@@ -68,7 +68,7 @@ class Connect4Game:
        
     def detectWasWin(self):
         
-        if self.tie_check == self.tops:
+        if self.generate_legal_moves() == []:
             self.isWin = 2
             return self.isWin
         
@@ -124,7 +124,15 @@ class Connect4Game:
             if self.isWin == 1:
                 print(f"Player {(self.turn+1) % 2 + 1} won!")
             else: print(f"It is a tie!")
-        
+    
+    def generate_legal_moves(self):
+        legal_moves = []
+        for col in range(self.width):
+            if self.tops[col] != self.height:
+                legal_moves.append(col)
+        return legal_moves
+                
+    
     def display_board(self):
         display = ""
         #Loop through height, and then cols
