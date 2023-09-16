@@ -3,8 +3,9 @@ class Connect4Game:
     def __init__(self, mode=0) -> None:
         self.mode = 0
         
-        self.width = 7
-        self.height = 6
+        self.width = 4
+        self.height = 4
+        self.in_a_row = 3
         
         self.isWin = 0 #turns 1 if true, 2 if tie
         
@@ -63,14 +64,11 @@ class Connect4Game:
         self.tops[col] += 1        
         self.turn = (self.turn + 1) % 2
         self.detectWasWin()
-        #print(self.display_board())
         
        
     def detectWasWin(self):
         
-        if self.generate_legal_moves() == []:
-            self.isWin = 2
-            return self.isWin
+        
         
         col = self.moves[-1]
         row = self.tops[col]-1
@@ -86,17 +84,20 @@ class Connect4Game:
         up_left = self.count_in_dir(col, row, player_moved, -1, 1)
         down_right = self.count_in_dir(col, row, player_moved, 1, -1)
         
-        if left + right >= 3:
+        if left + right >= self.in_a_row-1:
             self.isWin = 1
-        if down + 0 >= 3:
-            self.isWin = 1
-        
-        if down_left + up_right >= 3:
+        if down + 0 >= self.in_a_row-1:
             self.isWin = 1
         
-        if up_left + down_right >= 3:
+        if down_left + up_right >= self.in_a_row-1:
+            self.isWin = 1
+    
+        if up_left + down_right >= self.in_a_row-1:
             self.isWin = 1
         
+        if self.generate_legal_moves() == [] and self.isWin != 1:
+            self.isWin = 2
+
         return self.isWin
     
     #count in a direction based on off sets (-1, 0, 1) in col and row
@@ -154,9 +155,15 @@ class Connect4Game:
         for j in range(self.width):
             display += "+---"
         display += "+ \n"
+
+
         for j in range(self.width):
             display += f"  {j} "
+        display += "\n"
+
         return display
+
+        
     
-game = Connect4Game()
-game.playHumanGame()
+# game = Connect4Game()
+# game.playHumanGame()
