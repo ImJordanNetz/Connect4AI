@@ -1,4 +1,8 @@
 from Connect4 import Connect4Game
+import json
+
+
+
 
 def max_of_tuple(arr):
     maxi_index = 0
@@ -15,10 +19,10 @@ def min_of_tuple(arr):
     return arr[mini_index]
 
 
+
 seen_boards = {
 
 }
-
 
 #Returns best score, and the move associated with it ((score, move), all possible moves)
 def minimax(board: Connect4Game, depth):
@@ -56,7 +60,7 @@ def minimax(board: Connect4Game, depth):
             return (max_of_tuple(next_games), next_games)
         else:
             return (min_of_tuple(next_games), next_games)
-        
+
     
 def play_game_v_AI(board, player):
     print(board.display_board())
@@ -79,9 +83,36 @@ def play_game_v_AI(board, player):
             
 start = Connect4Game()
 
-play_game_v_AI(start, player=1)
-    
+#play_game_v_AI(start, player=2)
 
-#print(minimax(start, 3))
+def minimax_with_file(board, depth):  
+    global seen_boards
+    board_type = f"{board.width}x{board.height}x{board.in_a_row}"
+    with open('./solved/seen_boards.json', 'r') as f:
+        try:
+            loaded_data = json.load(f)
+            seen_boards_all = loaded_data
+        except json.JSONDecodeError as e:
+            seen_boards_all = {}
+    if board_type in seen_boards_all:
+        seen_boards = seen_boards_all[board_type]
+        seen_boards = {eval(key): value for key, value in seen_boards.items()}
+
+    print("starting search")
+    results = minimax(board, depth)
+    print("ended search")
+    # Write to a JSON file
+    stringified_seen_boards = {str(key): value for key, value in seen_boards.items()}
+    seen_boards_all[board_type] = stringified_seen_boards
+    with open('./solved/seen_boards.json', 'w') as file:
+        json.dump(seen_boards_all, file, indent=4)
+    return results
+
+minimax_with_file(start, 20)
+print("Done")
+
+
+
+
 
 

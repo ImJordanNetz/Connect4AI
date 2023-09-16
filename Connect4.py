@@ -3,7 +3,7 @@ class Connect4Game:
     def __init__(self, mode=0) -> None:
         self.mode = 0
         
-        self.width = 4
+        self.width = 5
         self.height = 4
         self.in_a_row = 3
         
