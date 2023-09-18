@@ -1,12 +1,12 @@
 class Connect4Game:
     
-    def __init__(self, mode=0) -> None:
+    def __init__(self, mode=0, width=7, height=6, in_a_row=4):
         self.mode = 0
         
-        self.width = 5
-        self.height = 4
-        self.in_a_row = 3
-        
+        self.width = width
+        self.height = height
+        self.in_a_row = in_a_row
+                
         self.isWin = 0 #turns 1 if true, 2 if tie
         
         self.tops = []
