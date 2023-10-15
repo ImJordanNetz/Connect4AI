@@ -45,13 +45,15 @@ def minimax(board: Connect4Game, depth):
 
             new_board.play_move(board.moves + [legal_moves[move]])
 
-            new_board_array = new_board.board
+            new_board_array = new_board.relevent_board
             
             
             score = 0
             
             board_str = json.dumps(new_board_array)
+
             board_str_rev = json.dumps(new_board_array[::-1])
+
             if board_str in seen_boards:
                 score = seen_boards[board_str]
             elif board_str_rev in seen_boards: 
@@ -59,14 +61,6 @@ def minimax(board: Connect4Game, depth):
             else:
                 score = minimax(new_board, depth-1)[0][0]
                 seen_boards[board_str] = score
-            # tuple_of_tuples = tuple(tuple(sublist) for sublist in new_board_array)
-            
-            # if tuple_of_tuples in seen_boards:
-            #     score = seen_boards[tuple_of_tuples]
-            # else:
-            #     score = minimax(new_board, depth-1)[0][0]
-            #     seen_boards[tuple_of_tuples] = score
-
 
             next_games.append((score, legal_moves[move]))
         if board.turn == 0:
@@ -140,9 +134,9 @@ def minimax_with_file(board, depth):
 
 # board = Connect4Game(width=5, height=4, in_a_row =4)
 # minimax_with_file(board, board.width*board.height)
-board = Connect4Game(width=6, height=5, in_a_row =4)
-minimax_with_file(board, board.width*board.height)
-#play_game_v_AI(board, 4)
+board = Connect4Game(width=4, height=4, in_a_row =3)
+#minimax_with_file(board, board.width*board.height)
+play_game_v_AI(board, 1, use_solved=0)
 #set_solved(board)
 #print(seen_boards)
 

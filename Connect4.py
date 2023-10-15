@@ -17,24 +17,42 @@ class Connect4Game:
             self.tie_check.append(self.height)
             self.tops.append(0)
         
-        
+        self.relevent_board = []
         self.board = [] # board is board[col][row]
         for col in range(self.width):
             arr = []
             for item in range(self.height):
                 arr.append(0)
             self.board.append(arr)
+            self.relevent_board.append(arr)
             
         
         self.turn = 0 #0 -> P1, 1 -> P2
             
             
-        #modes:
+        
+        self.mode = mode
+    
+    def set_relevent_boards(self):
+        for col in range(len(self.board)):
+            for row in range(len(self.board[col])):
+                if self.board[col][row] != 0:
+                    in_range = False
+                    for i in range(len(self.tops)):
+                        dist_in_height = abs((self.tops[i]-row))
+                        dist_in_width = abs(col-i)
+                        if max(dist_in_height, dist_in_width) < self.in_a_row:
+                            in_range = True
+                    if in_range == False:
+                        self.relevent_board[col][row] = 3
+                    else:
+                        self.relevent_board[col][row] = self.board[col][row]
+
+
+            #modes:
          # 0 -> PvP
          # 1 -> P v AI
          # 2 -> AI v AI
-        self.mode = mode
-    
 
     def play_move(self, col):
         
@@ -59,11 +77,11 @@ class Connect4Game:
 
         self.board[col][self.tops[col]] = self.turn + 1 # turn + 1 makes it into player number
         
-        
         self.moves.append(col)
         self.tops[col] += 1        
         self.turn = (self.turn + 1) % 2
         self.detectWasWin()
+        self.set_relevent_boards()
         
        
     def detectWasWin(self):
@@ -121,7 +139,7 @@ class Connect4Game:
         if self.mode == 0:
             while self.isWin == 0:
                 self.play_move(int(input(f"Player {self.turn+1}, it is your move. Type 0 -> {self.width-1}: ")))
-                print(self.display_board())
+                print(self.display_board(board_type="relevent"))
             if self.isWin == 1:
                 print(f"Player {(self.turn+1) % 2 + 1} won!")
             else: print(f"It is a tie!")
@@ -134,8 +152,16 @@ class Connect4Game:
         return legal_moves
                 
     
-    def display_board(self):
+    def display_board(self, board_type="normal"):
         display = ""
+        used_board = None
+        if board_type == "normal":
+            used_board = self.board
+        elif board_type == "relevent":
+            used_board=self.relevent_board
+
+
+
         #Loop through height, and then cols
         for i in range(self.height):
             for j in range(self.width):
@@ -143,13 +169,16 @@ class Connect4Game:
             display += "+ \n"
             for j in range(self.width):
                 display += "| "
-                val = self.board[j][self.height-1-i]
+                val = used_board[j][self.height-1-i]
                 dis_item = ""
                 if val == 0:
                     dis_item = " "
                 elif val == 1:
                     dis_item = "A"
-                else: dis_item = "B"
+                elif val == 2: 
+                    dis_item = "B"
+                else:
+                    dis_item = "."
                 display += dis_item + " "
             display+= "| \n"
         for j in range(self.width):
@@ -165,5 +194,5 @@ class Connect4Game:
 
         
     
-# game = Connect4Game()
-# game.playHumanGame()
+game = Connect4Game()
+game.playHumanGame()
