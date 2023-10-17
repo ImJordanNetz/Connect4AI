@@ -41,10 +41,10 @@ def minimax(board: Connect4Game, depth):
         next_games = []
         
         for move in range(len(legal_moves)):
-            new_board = Connect4Game(width=board.width, height=board.height, in_a_row=board.in_a_row)
+            new_board = Connect4Game(board)
+            new_board.play_move(legal_moves[move])
 
-            new_board.play_move(board.moves + [legal_moves[move]])
-
+            
             new_board_array = new_board.relevent_board
             
             
@@ -116,7 +116,6 @@ def minimax_with_file(board, depth):
             try:
                 loaded_data = json.load(f)
                 seen_boards = loaded_data
-                # seen_boards = {eval(key): value for key, value in seen_boards.items()}
             except:
                 pass
     except:
@@ -126,17 +125,17 @@ def minimax_with_file(board, depth):
     print("starting search")
     results = minimax(board, depth)
     print("ended search")
-    # Write to a JSON file
-    # stringified_seen_boards = {str(key): value for key, value in seen_boards.items()}
+    import os
+    print(os.getcwd())
     with open(f'./solved/{board_type}.json', 'w') as file:
         json.dump(seen_boards, file, indent=4)
     return results
 
 # board = Connect4Game(width=5, height=4, in_a_row =4)
 # minimax_with_file(board, board.width*board.height)
-board = Connect4Game(width=4, height=4, in_a_row =3)
-#minimax_with_file(board, board.width*board.height)
-play_game_v_AI(board, 1, use_solved=0)
+board = Connect4Game(width=5, height=6, in_a_row =4)
+minimax_with_file(board, board.width*board.height)
+#play_game_v_AI(board, 1, use_solved=0)
 #set_solved(board)
 #print(seen_boards)
 
