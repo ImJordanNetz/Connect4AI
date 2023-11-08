@@ -1,7 +1,7 @@
 from Connect4 import Connect4Game
 import json
 
-seen_boards = []
+seen_boards = {}
 
 def ab_pruning(board, depth, alpha=float("-inf"), beta=float("inf")):
     global seen_boards
@@ -39,6 +39,7 @@ def ab_pruning(board, depth, alpha=float("-inf"), beta=float("inf")):
                     
                 else:
                     eval = ab_pruning(new_board, depth-1, alpha, beta)
+                    seen_boards[board_str] = eval[0]
                 if eval[0] > max_eval[0]:
                     max_eval = (eval[0], legal_moves[move])
                 alpha = max(alpha, eval[0])
@@ -64,7 +65,7 @@ def ab_pruning(board, depth, alpha=float("-inf"), beta=float("inf")):
                     
                 else:
                     eval = ab_pruning(new_board, depth-1, alpha, beta)
-                
+                    seen_boards[board_str] = eval[0]
                 
                 if eval[0] < min_eval[0]:
                     min_eval = (eval[0], legal_moves[move])
@@ -82,7 +83,9 @@ def play_game_v_AI(board, player):
         if board.turn == player-1:
             board.play_move(int(input(f"Player {board.turn+1}, it is your move. Type 0 -> {board.width-1}: ")))
         else:
+            start_time = time.time()
             move = ab_pruning(board, board.width*board.height)
+            print ("My program took", time.time() - start_time, "to run")
             board.play_move(move[1])
             print("The AI has moved")
             print(f"AI Eval: {move[0]}")
@@ -94,7 +97,6 @@ def play_game_v_AI(board, player):
     else: print(f"It is a tie!")
 
 import time
-start_time = time.time()
-board = Connect4Game(width=4, height=5, in_a_row =3)
-ab_pruning(board, depth=board.width*board.height)
-print ("My program took", time.time() - start_time, "to run")
+
+board = Connect4Game(width=5, height=5, in_a_row =4)
+play_game_v_AI(board, 1)
