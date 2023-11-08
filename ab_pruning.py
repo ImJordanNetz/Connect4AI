@@ -3,9 +3,53 @@ import json
 
 seen_boards = {}
 
-def ab_pruning(board, depth, alpha=float("-inf"), beta=float("inf")):
+
+def set_solved(board):
     global seen_boards
+    print('opening file...')
+    board_type = f"{board.width}x{board.height}x{board.in_a_row}"
+    try:
+        with open(f'./solved/{board_type}.json', 'r') as f:
+            try:
+                print('loading file...')
+                loaded_data = json.load(f)
+                seen_boards = loaded_data
+                print('converting file...')
+                seen_boards = {eval(key): value for key, value in seen_boards.items()}
+                print('done')
+            except:
+                pass
+    except:
+            pass
+
+def ab_pruning_with_file(board, depth):  
+    global seen_boards
+    board_type = f"{board.width}x{board.height}x{board.in_a_row}"
+    try:
+        with open(f'./solved/{board_type}.json', 'r') as f:
+            try:
+                loaded_data = json.load(f)
+                seen_boards = loaded_data
+            except:
+                pass
+    except:
+            pass
+    print("starting search")
+    results = ab_pruning(board, depth)
+    print("ended search")
+    with open(f'./solved/{board_type}.json', 'w') as file:
+        json.dump(seen_boards, file, indent=4)
+    return results
+        
+
+def ab_pruning(board, depth=-1, alpha=float("-inf"), beta=float("inf")):
+    if depth == -1:
+        depth = board.width*board.height
+    global seen_boards
+    
     legal_moves = board.generate_legal_moves()
+    center_column = (board.width-1) // 2
+    legal_moves.sort(key=lambda move: abs(move - center_column))
     
     if board.isWin == 1:
         if (board.turn + 1) % 2: #(board.turn + 1) % 2 is how to get to the next player
@@ -97,6 +141,10 @@ def play_game_v_AI(board, player):
     else: print(f"It is a tie!")
 
 import time
-
-board = Connect4Game(width=5, height=5, in_a_row =4)
-play_game_v_AI(board, 1)
+board = Connect4Game(width=5, height=6, in_a_row =4)
+ab_pruning_with_file(board, board.width*board.height)
+#set_solved(board)
+play_game_v_AI(board, 2)
+# start_time = time.time()
+# ab_pruning(board)
+# print ("My program took", time.time() - start_time, "to run")
